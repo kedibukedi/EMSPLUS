@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.zfy.dao.EmpDAO">
+    <resultMap id="empmap" type="Emp">
+        <id column="eid" property="id"/>
+        <result column="headlike" property="headlike"/>
+        <result column="empname" property="empname"/>
+        <result column="age" property="age"/>
+        <result column="salary" property="salary"/>
+        <result column="did" property="did"/>
+        <association property="dept" javaType="Dept">
+            <id column="pid" property="id"/>
+            <result column="dept_name" property="department_name"/>
+            <result column="department_num" property="department_num"/>
+        </association>
+    </resultMap>
+    <select id="selectAll" resultMap="empmap">
+    select e.id as eid,
+           e.headlike,e.empname,e.salary,e.age,p.department_name as dept_name
+           from t_emp e left join t_department p
+           on e.did=p.id
+          where e.did=#{did}
+</select>
+    <insert id="addemp">
+        insert into t_emp (headlike,empname,age,salary,did)
+        values (#{headlike},#{empname},#{age},#{salary},#{did})
+    </insert>
+    <select id="selectbyid" resultType="Emp">
+        select  * from t_emp where id=#{id} ;
+    </select>
+    <update id="update">
+        update t_emp set  headlike=#{headlike},empname=#{empname},age=#{age},salary=#{salary},did=#{did}
+          where id=#{id} ;
+    </update>
+    <delete id="delete">
+        delete from t_emp where id=#{id}
+    </delete>
+</mapper>

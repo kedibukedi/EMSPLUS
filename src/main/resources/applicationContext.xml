@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+       <!--提示在哪里使用了注解-->
+        <context:component-scan base-package="com.zfy.service"></context:component-scan>
+        <!--读取jdbc.properties 小文件-->
+        <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+        <!--创建数据源-->
+        <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+                <property name="driverClassName" value="${driver}"></property>
+                <property name="url" value="${url}"></property>
+                <property name="username" value="${name}"></property>
+                <property name="password" value="${password}"></property>
+        </bean>
+        <!--创建sqlsession 工厂-->
+        <bean id="SqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+               <property name="dataSource" ref="dataSource"></property>
+                <!--给 实体类七别名-->
+                <property name="typeAliasesPackage">
+                        <value>com.zfy.entity</value>
+                </property>
+                <!--mapper 文件的注册-->
+                <property name="mapperLocations">
+                        <value>classpath:com/zfy/dao/*Mapper.xml</value>
+                </property>
+        </bean>
+        <!--自动创建Dao 实现类对象-->
+        <bean id="MapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+               <property name="basePackage">
+                       <value>com.zfy.dao</value>
+               </property>
+        </bean>
+        <!--激活注解-->
+        <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+                <property name="dataSource" ref="dataSource"></property>
+        </bean>
+        <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+</beans>
